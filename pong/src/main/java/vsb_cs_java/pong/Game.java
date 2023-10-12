@@ -19,7 +19,9 @@ public class Game
 	private final Bat BatLeft;
 	private final Bat BatRight;
 	private final CenterNet CenterNet;
+	private final Score Score;
 	boolean ballIn = false;
+
 	
 	private DrawableSimulable[] entities;
 	
@@ -27,44 +29,31 @@ public class Game
 	{
 		this.width = width;
 		this.height = height;
-		
-		this.ball = new Ball(this, new Point2D(400, 300), new Point2D(200, 200));
-		this.BatLeft = new Bat(this, new Point2D(50, 100), new Point2D(0, -50));
-		this.BatRight = new Bat(this, new Point2D(740, 400), new Point2D(0, 50));
-		this.CenterNet = new CenterNet(this);
+
+		entities = new DrawableSimulable[]{
+			this.ball = new Ball(this, new Point2D(400, 300), new Point2D(200, 200)),
+			this.BatLeft = new Bat(this, new Point2D(50, 100), new Point2D(0, -50)),
+			this.BatRight = new Bat(this, new Point2D(740, 400), new Point2D(0, 50)),
+			this.CenterNet = new CenterNet(this),
+			this.Score = new Score(this),
+		};
 	}
 	
 	public void draw(GraphicsContext gc) 
 	{
 		gc.setFill(Color.BLACK);
 		gc.fillRect(0, 0, width, height);
-	    
-		
-        
-        gc.setFill(Color.WHITE);
-        gc.setFont(Font.font("Arial", 50)); // Font and font size
 
-
-        gc.fillText("4", 325, 100); 
-        gc.fillText("0", 450, 100); 
-
-        
-		gc.save();
-		gc.scale(1, -1);
-		gc.translate(0, -height);
-		
-		this.ball.draw(gc);
-		this.BatLeft.draw(gc);
-		this.BatRight.draw(gc);
-		this.CenterNet.draw(gc);
-		gc.restore();
+		for (DrawableSimulable entity: entities) {
+			entity.draw(gc);
+		}
 	}
 	
 	public void simulate(double deltaT) 
 	{
-		this.ball.simulate(deltaT);
-		this.BatLeft.simulate(deltaT);
-		this.BatRight.simulate(deltaT);
+		for (DrawableSimulable entity: entities) {
+			entity.simulate(deltaT);
+		}
 		Random rand = new Random();
 						
 		if(ball.position.getY() >= 0  && (ball.position.getY() + ball.size) <= getHeight() && ball.position.getX() >= 0  && (ball.position.getX() + ball.size) <= getWidth()) 
